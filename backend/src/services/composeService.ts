@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, rmSync, readFileSync } from 'fs';
 import { join, normalize, basename } from 'path';
 import AdmZip from 'adm-zip';
 import Docker from 'dockerode';
-import { create as createArchiver } from 'archiver';
+import archiver from 'archiver';
 import { Readable } from 'stream';
 
 import prisma from '../lib/prisma';
@@ -11,7 +11,7 @@ import { COMPOSE_DIR } from './fileService';
 const docker = new Docker();
 
 function packDirToTarStream(dirPath: string): Readable {
-  const archive = createArchiver('tar', { gzip: false });
+  const archive = archiver('tar', { gzip: false });
   archive.directory(dirPath, false);
   archive.finalize();
   return archive;
