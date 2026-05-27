@@ -17,6 +17,8 @@ export function ChallengeDetailPage() {
   const [showHints, setShowHints] = useState(false);
   const [loading, setLoading] = useState(true);
   const [instanceLoading, setInstanceLoading] = useState(false);
+  const [stopLoading, setStopLoading] = useState(false);
+  const [recreateLoading, setRecreateLoading] = useState(false);
   const [eventEnded, setEventEnded] = useState(false);
   const prefersReduced = useReducedMotion();
 
@@ -99,19 +101,22 @@ export function ChallengeDetailPage() {
   }
 
   async function handleStopInstance() {
-    if (!instance?.instance?.id) return;
+    if (!instance?.instance?.id || stopLoading) return;
+    setStopLoading(true);
     try {
       await api.post(`/instances/${instance.instance.id}/stop`);
       setInstance(null);
       setCountdown(0);
     } catch {
       // Handle error
+    } finally {
+      setStopLoading(false);
     }
   }
 
   async function handleRecreateInstance() {
-    if (!id) return;
-    setInstanceLoading(true);
+    if (!id || recreateLoading) return;
+    setRecreateLoading(true);
     try {
       const { data } = await api.post('/instances/recreate', { challengeId: id });
       if (data.success) {
@@ -121,7 +126,7 @@ export function ChallengeDetailPage() {
     } catch {
       // Handle error
     } finally {
-      setInstanceLoading(false);
+      setRecreateLoading(false);
     }
   }
 
@@ -255,16 +260,17 @@ export function ChallengeDetailPage() {
                   <div className="flex gap-2 mt-3">
                     <button
                       onClick={handleStopInstance}
-                      className="bg-danger hover:bg-danger/80 text-white text-sm font-medium px-4 py-2 rounded-button transition-duration-micro"
+                      disabled={stopLoading}
+                      className="bg-danger hover:bg-danger/80 text-white text-sm font-medium px-4 py-2 rounded-button transition-duration-micro disabled:opacity-50"
                     >
-                      Stop
+                      {stopLoading ? 'Stopping...' : 'Stop'}
                     </button>
                     <button
                       onClick={handleRecreateInstance}
-                      disabled={instanceLoading}
+                      disabled={recreateLoading}
                       className="bg-warning hover:bg-warning/80 text-white text-sm font-medium px-4 py-2 rounded-button transition-duration-micro disabled:opacity-50"
                     >
-                      {instanceLoading ? 'Creating...' : 'Recreate'}
+                      {recreateLoading ? 'Recreating...' : 'Recreate'}
                     </button>
                   </div>
                   {countdown <= 120 && (

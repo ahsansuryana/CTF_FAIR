@@ -136,7 +136,8 @@ router.post('/generate', requireAuth, requireParticipant, requireEventRunning, a
     res.status(201).json({
       success: true,
       data: {
-        instanceId: instance.id,
+        id: instance.id,
+        status: 'RUNNING',
         url: `http://${process.env.DOMAIN || 'localhost'}:${assignedPort}`,
         expiresAt: instance.expiresAt,
         timeRemaining: ttlSeconds,
@@ -384,7 +385,8 @@ router.post('/recreate', requireAuth, requireParticipant, requireEventRunning, a
     res.status(201).json({
       success: true,
       data: {
-        instanceId: instance.id,
+        id: instance.id,
+        status: 'RUNNING',
         url: `http://${process.env.DOMAIN || 'localhost'}:${assignedPort}`,
         expiresAt: instance.expiresAt,
         timeRemaining: ttlSeconds,
