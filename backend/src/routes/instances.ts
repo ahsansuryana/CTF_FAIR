@@ -7,7 +7,7 @@ import { createAuditLog } from '../services/audit';
 
 const router = Router();
 
-router.get('/status', requireAuth, requireParticipant, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/status', requireAuth, requireParticipant, requireEventRunning, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { challengeId } = req.query;
 

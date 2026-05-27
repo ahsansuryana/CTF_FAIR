@@ -3,14 +3,16 @@ import { motion } from 'framer-motion';
 import api from '../lib/api';
 import socket from '../lib/socket';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { useEventStore } from '../store/eventStore';
 import { ScoreboardEntry } from '../types';
 
 export function ScoreboardPage() {
   const [scoreboard, setScoreboard] = useState<ScoreboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [eventName, setEventName] = useState('');
   const [isFrozen, setIsFrozen] = useState(false);
   const prefersReduced = useReducedMotion();
+  const eventName = useEventStore((s) => s.eventName);
+  const loadEventInfo = useEventStore((s) => s.loadEventInfo);
 
   useEffect(() => {
     api.get('/scoreboard').then(({ data }) => {
@@ -21,11 +23,7 @@ export function ScoreboardPage() {
       setLoading(false);
     }).catch(() => setLoading(false));
 
-    api.get('/event/info').then(({ data }) => {
-      if (data.success && data.data?.name) {
-        setEventName(data.data.name);
-      }
-    }).catch(() => {});
+    loadEventInfo();
 
     socket.connect();
     socket.on('scoreboard:update', (data: unknown) => {

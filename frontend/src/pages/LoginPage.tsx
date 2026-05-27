@@ -1,9 +1,9 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { useEventStore } from '../store/eventStore';
 import { motion } from 'framer-motion';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import api from '../lib/api';
 
 export function LoginPage() {
   const prefersReduced = useReducedMotion();
@@ -11,18 +11,11 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [eventName, setEventName] = useState('');
   const login = useAuthStore((s) => s.login);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    api.get('/event/info').then(({ data }) => {
-      if (data.success && data.data?.name) {
-        setEventName(data.data.name);
-        document.title = data.data.name;
-      }
-    }).catch(() => {});
-  }, []);
+  const eventName = useEventStore((s) => s.eventName);
+  const loadEventInfo = useEventStore((s) => s.loadEventInfo);
+  loadEventInfo();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();

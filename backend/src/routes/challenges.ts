@@ -76,7 +76,7 @@ async function checkUnlock(userId: string, challengeId: string): Promise<{ unloc
   return { unlocked: false, locked: true, solved: false };
 }
 
-router.get('/', requireAuth, requireParticipant, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/', requireAuth, requireParticipant, requireEventRunning, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const challenges = await prisma.challenge.findMany({
       where: { isActive: true },
@@ -113,7 +113,7 @@ router.get('/', requireAuth, requireParticipant, async (req: AuthenticatedReques
   }
 });
 
-router.get('/:id', requireAuth, requireParticipant, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/:id', requireAuth, requireParticipant, requireEventRunning, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const challenge = await prisma.challenge.findUnique({
       where: { id: req.params.id },
@@ -262,7 +262,7 @@ async function getScoreboard() {
 }
 
 // Hint endpoint
-router.get('/:id/hints', requireAuth, requireParticipant, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/:id/hints', requireAuth, requireParticipant, requireEventRunning, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const challengeId = req.params.id!;
     const challenge = await prisma.challenge.findUnique({ where: { id: challengeId } });

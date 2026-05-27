@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import api from '../../lib/api';
+import { useEventStore } from '../../store/eventStore';
 
 const navItems = [
   { to: '/admin', label: 'Dashboard', icon: 'M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z', end: true },
@@ -14,19 +14,12 @@ const navItems = [
 
 export function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
-  const [eventName, setEventName] = useState('');
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    api.get('/event/info').then(({ data }) => {
-      if (data.success && data.data?.name) {
-        setEventName(data.data.name);
-        document.title = `${data.data.name} | Admin`;
-      }
-    }).catch(() => {});
-  }, []);
+  const eventName = useEventStore((s) => s.eventName);
+  const loadEventInfo = useEventStore((s) => s.loadEventInfo);
+  loadEventInfo();
 
   async function handleLogout() {
     await logout();

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import { motion } from 'framer-motion';
 import api from '../lib/api';
 import { useReducedMotion } from '../hooks/useReducedMotion';
@@ -15,6 +16,7 @@ export function ChallengeDetailPage() {
   const [showHints, setShowHints] = useState(false);
   const [loading, setLoading] = useState(true);
   const [instanceLoading, setInstanceLoading] = useState(false);
+  const [eventEnded, setEventEnded] = useState(false);
   const prefersReduced = useReducedMotion();
 
   useEffect(() => {
@@ -27,7 +29,12 @@ export function ChallengeDetailPage() {
         setChallenge(data.data);
       }
       setLoading(false);
-    }).catch(() => setLoading(false));
+    }).catch((err: AxiosError) => {
+      if (err.response?.status === 403) {
+        setEventEnded(true);
+      }
+      setLoading(false);
+    });
     api.get(`/instances/status?challengeId=${id}`).then(({ data }) => {
       if (data.success) {
         setInstance(data.data);
@@ -74,6 +81,33 @@ export function ChallengeDetailPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-bg-base">
         <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spinner" />
+      </div>
+    );
+  }
+
+  if (eventEnded) {
+    return (
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
+        <div className="text-center max-w-md px-8">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-warning/20 flex items-center justify-center">
+            <svg className="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h2 className="font-display text-2xl font-semibold text-text-primary mb-3">Event Telah Berakhir</h2>
+          <p className="text-text-secondary mb-8">Competition has ended. Challenges are no longer available.</p>
+          <Link to="/dashboard" className="bg-accent hover:bg-accent/80 text-white font-medium px-6 py-2 rounded-button transition-duration-micro inline-block">
+            Back to Dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!challenge) {
+    return (
+      <div className="min-h-screen bg-bg-base flex items-center justify-center">
+        <p className="text-text-muted">Challenge not found.</p>
       </div>
     );
   }

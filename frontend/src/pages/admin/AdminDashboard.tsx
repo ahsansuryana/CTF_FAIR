@@ -5,13 +5,16 @@ import { AdminStats } from '../../types';
 export function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
 
-  useEffect(() => {
-    api.get('/admin/stats').then(({ data }) => {
+  async function fetchStats() {
+    try {
+      const { data } = await api.get('/admin/stats');
       if (data.success) {
         setStats(data.data);
       }
-    }).catch(() => {});
-  }, []);
+    } catch {}
+  }
+
+  useEffect(() => { fetchStats(); }, []);
 
   return (
     <div className="p-8">
@@ -49,7 +52,7 @@ export function AdminDashboard() {
                 <button
                   onClick={async () => {
                     await api.post('/admin/event/start');
-                    window.location.reload();
+                    await fetchStats();
                   }}
                   className="bg-success hover:bg-success/80 text-white font-medium px-4 py-2 rounded-button transition-duration-micro text-sm"
                 >
@@ -59,7 +62,7 @@ export function AdminDashboard() {
                 <button
                   onClick={async () => {
                     await api.post('/admin/event/stop');
-                    window.location.reload();
+                    await fetchStats();
                   }}
                   className="bg-danger hover:bg-danger/80 text-white font-medium px-4 py-2 rounded-button transition-duration-micro text-sm"
                 >
@@ -69,7 +72,7 @@ export function AdminDashboard() {
               <button
                 onClick={async () => {
                   await api.patch('/admin/scoreboard/freeze');
-                  window.location.reload();
+                  await fetchStats();
                 }}
                 className="bg-warning hover:bg-warning/80 text-white font-medium px-4 py-2 rounded-button transition-duration-micro text-sm"
               >
