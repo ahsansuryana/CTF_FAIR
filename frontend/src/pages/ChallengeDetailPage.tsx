@@ -10,6 +10,7 @@ export function ChallengeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [challenge, setChallenge] = useState<ChallengeDetail | null>(null);
   const [instance, setInstance] = useState<DockerInstanceStatus | null>(null);
+  const [countdown, setCountdown] = useState(0);
   const [flag, setFlag] = useState('');
   const [flagResult, setFlagResult] = useState<{ correct: boolean; message: string } | null>(null);
   const [flagLoading, setFlagLoading] = useState(false);
@@ -38,9 +39,28 @@ export function ChallengeDetailPage() {
     api.get(`/instances/status?challengeId=${id}`).then(({ data }) => {
       if (data.success) {
         setInstance(data.data);
+        if (data.data?.hasInstance && data.data?.instance?.timeRemaining) {
+          setCountdown(data.data.instance.timeRemaining);
+        }
       }
     }).catch(() => {});
   }, [id]);
+
+  // Real-time countdown
+  useEffect(() => {
+    if (!instance?.hasInstance || instance.instance?.status !== 'RUNNING') return;
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setInstance(null);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [instance?.hasInstance, instance?.instance?.status]);
 
   async function handleSubmitFlag() {
     if (!id || !flag.trim()) return;
@@ -69,6 +89,34 @@ export function ChallengeDetailPage() {
       const { data } = await api.post('/instances/generate', { challengeId: id });
       if (data.success) {
         setInstance({ hasInstance: true, instance: data.data });
+        setCountdown(data.data.timeRemaining);
+      }
+    } catch {
+      // Handle error
+    } finally {
+      setInstanceLoading(false);
+    }
+  }
+
+  async function handleStopInstance() {
+    if (!instance?.instance?.id) return;
+    try {
+      await api.post(`/instances/${instance.instance.id}/stop`);
+      setInstance(null);
+      setCountdown(0);
+    } catch {
+      // Handle error
+    }
+  }
+
+  async function handleRecreateInstance() {
+    if (!id) return;
+    setInstanceLoading(true);
+    try {
+      const { data } = await api.post('/instances/recreate', { challengeId: id });
+      if (data.success) {
+        setInstance({ hasInstance: true, instance: data.data });
+        setCountdown(data.data.timeRemaining);
       }
     } catch {
       // Handle error
@@ -191,7 +239,7 @@ export function ChallengeDetailPage() {
           {challenge.dockerImage && (
             <div className="bg-bg-muted border border-border-subtle rounded-card p-4 mb-6">
               <h3 className="text-sm font-medium text-text-primary mb-2">Instance</h3>
-              {instance?.hasInstance && instance.instance ? (
+              {instance?.hasInstance && instance.instance?.status === 'RUNNING' ? (
                 <div>
                   <a
                     href={instance.instance.url}
@@ -201,15 +249,27 @@ export function ChallengeDetailPage() {
                   >
                     {instance.instance.url}
                   </a>
-                  <p className="text-text-muted text-xs mt-1">
-                    Expires in {Math.floor(instance.instance.timeRemaining / 60)}m {instance.instance.timeRemaining % 60}s
+                  <p className="font-mono text-sm text-text-primary mt-2">
+                    {String(Math.floor(countdown / 60)).padStart(2, '0')}:{String(countdown % 60).padStart(2, '0')}
                   </p>
-                  <button
-                    onClick={handleGenerateInstance}
-                    className="text-xs text-text-secondary hover:text-text-primary mt-2 transition-duration-micro"
-                  >
-                    Restart Instance
-                  </button>
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      onClick={handleStopInstance}
+                      className="bg-danger hover:bg-danger/80 text-white text-sm font-medium px-4 py-2 rounded-button transition-duration-micro"
+                    >
+                      Stop
+                    </button>
+                    <button
+                      onClick={handleRecreateInstance}
+                      disabled={instanceLoading}
+                      className="bg-warning hover:bg-warning/80 text-white text-sm font-medium px-4 py-2 rounded-button transition-duration-micro disabled:opacity-50"
+                    >
+                      {instanceLoading ? 'Creating...' : 'Recreate'}
+                    </button>
+                  </div>
+                  {countdown <= 120 && (
+                    <p className="text-danger text-xs mt-2">Instance will expire soon!</p>
+                  )}
                 </div>
               ) : (
                 <button
