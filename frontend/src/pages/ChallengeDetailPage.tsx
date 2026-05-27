@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { motion } from 'framer-motion';
 import api from '../lib/api';
@@ -21,6 +21,7 @@ export function ChallengeDetailPage() {
   const [recreateLoading, setRecreateLoading] = useState(false);
   const [eventEnded, setEventEnded] = useState(false);
   const prefersReduced = useReducedMotion();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) {
@@ -75,6 +76,9 @@ export function ChallengeDetailPage() {
         setFlagResult(data.data);
         if (data.data?.correct) {
           setChallenge((prev) => prev ? { ...prev, isSolved: true } : prev);
+          setInstance(null);
+          setCountdown(0);
+          setTimeout(() => navigate('/dashboard'), 1500);
         }
       }
     } catch {
@@ -241,7 +245,7 @@ export function ChallengeDetailPage() {
           )}
 
           {/* Docker instance panel for web challenges */}
-          {challenge.dockerImage && (
+          {!challenge.isSolved && challenge.dockerImage && (
             <div className="bg-bg-muted border border-border-subtle rounded-card p-4 mb-6">
               <h3 className="text-sm font-medium text-text-primary mb-2">Instance</h3>
               {instance?.hasInstance && instance.instance?.status === 'RUNNING' ? (

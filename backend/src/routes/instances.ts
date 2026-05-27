@@ -71,6 +71,15 @@ router.post('/generate', requireAuth, requireParticipant, requireEventRunning, a
       return;
     }
 
+    // Check if already solved
+    const solved = await prisma.solve.findUnique({
+      where: { userId_challengeId: { userId: req.user!.userId, challengeId } },
+    });
+    if (solved) {
+      res.status(400).json({ success: false, error: 'Challenge already solved' });
+      return;
+    }
+
     // Check max instances per user
     const maxInstancesConfig = await prisma.eventConfig.findUnique({ where: { key: 'max_instances_per_user' } });
     const maxInstances = (maxInstancesConfig?.value as number) || 3;
@@ -299,6 +308,15 @@ router.post('/recreate', requireAuth, requireParticipant, requireEventRunning, a
 
     if (challenge.category !== 'web' || !challenge.dockerImage) {
       res.status(400).json({ success: false, error: 'This challenge does not support Docker instances' });
+      return;
+    }
+
+    // Check if already solved
+    const solved = await prisma.solve.findUnique({
+      where: { userId_challengeId: { userId: req.user!.userId, challengeId } },
+    });
+    if (solved) {
+      res.status(400).json({ success: false, error: 'Challenge already solved' });
       return;
     }
 
