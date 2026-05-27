@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PARTICIPANT
+}
+
+enum InstanceStatus {
+  RUNNING
+  STOPPED
+  EXPIRED
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  username     String   @unique @db.VarChar(50)
+  email        String?  @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  role         Role     @default(PARTICIPANT)
+  isBanned     Boolean  @default(false) @map("is_banned")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  solves         Solve[]
+  submissions    Submission[]
+  dockerInstances DockerInstance[]
+  auditLogs      AuditLog[]
+
+  @@map("users")
+}
+
+model Challenge {
+  id            String   @id @default(uuid()) @db.Uuid
+  title         String   @db.VarChar(255)
+  description   String   @db.Text
+  category      String   @db.VarChar(50)
+  points        Int
+  flag          String   @db.VarChar(500)
+  orderIndex    Int      @map("order_index")
+  isActive      Boolean  @default(true) @map("is_active")
+  dockerImage   String?  @map("docker_image") @db.VarChar(255)
+  attachmentUrl String?  @map("attachment_url") @db.VarChar(500)
+  composeStatus String   @default("none") @map("compose_status") @db.VarChar(20) // "none" | "uploaded" | "building" | "ready" | "error"
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  hints           Hint[]
+  solves          Solve[]
+  submissions     Submission[]
+  dockerInstances DockerInstance[]
+  files           ChallengeFile[]
+
+  @@index([orderIndex])
+  @@map("challenges")
+}
+
+model ChallengeFile {
+  id            String   @id @default(uuid()) @db.Uuid
+  challengeId   String   @map("challenge_id") @db.Uuid
+  filename      String   @db.VarChar(255)
+  storedPath    String   @db.VarChar(500)
+  mimeType      String   @db.VarChar(100)
+  fileSize      Int
+  fileType      String   @default("attachment") @db.VarChar(50) // "attachment" | "compose"
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([challengeId])
+  @@index([fileType])
+  @@map("challenge_files")
+}
+
+model Hint {
+  id          String   @id @default(uuid()) @db.Uuid
+  challengeId String   @map("challenge_id") @db.Uuid
+  content     String   @db.Text
+  orderIndex  Int      @default(0) @map("order_index")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([challengeId])
+  @@map("hints")
+}
+
+model Solve {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  challengeId   String   @map("challenge_id") @db.Uuid
+  pointsEarned  Int      @map("points_earned")
+  solvedAt      DateTime @default(now()) @map("solved_at")
+
+  user      User      @relation(fields: [userId], references: [id])
+  challenge Challenge @relation(fields: [challengeId], references: [id])
+
+  @@unique([userId, challengeId])
+  @@index([userId])
+  @@index([challengeId])
+  @@map("solves")
+}
+
+model Submission {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  challengeId    String   @map("challenge_id") @db.Uuid
+  flagSubmitted  String   @map("flag_submitted") @db.VarChar(500)
+  isCorrect      Boolean  @map("is_correct")
+  ipAddress      String?  @map("ip_address") @db.VarChar(45)
+  submittedAt    DateTime @default(now()) @map("submitted_at")
+
+  user      User      @relation(fields: [userId], references: [id])
+  challenge Challenge @relation(fields: [challengeId], references: [id])
+
+  @@index([userId])
+  @@index([challengeId])
+  @@index([submittedAt])
+  @@map("submissions")
+}
+
+model DockerInstance {
+  id            String         @id @default(uuid()) @db.Uuid
+  userId        String         @map("user_id") @db.Uuid
+  challengeId   String         @map("challenge_id") @db.Uuid
+  containerId   String         @map("container_id") @db.VarChar(100)
+  assignedPort  Int            @map("assigned_port")
+  status        InstanceStatus @default(RUNNING)
+  expiresAt     DateTime       @map("expires_at")
+  createdAt     DateTime       @default(now()) @map("created_at")
+
+  user      User      @relation(fields: [userId], references: [id])
+  challenge Challenge @relation(fields: [challengeId], references: [id])
+
+  @@index([userId])
+  @@index([challengeId])
+  @@index([status])
+  @@map("docker_instances")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String   @map("actor_id") @db.Uuid
+  action     String   @db.VarChar(100)
+  targetType String?  @map("target_type") @db.VarChar(50)
+  targetId   String?  @map("target_id") @db.VarChar(50)
+  metadata   Json?    @db.JsonB
+  ipAddress  String?  @map("ip_address") @db.VarChar(45)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  actor User @relation(fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model EventConfig {
+  id        String   @id @default(uuid()) @db.Uuid
+  key       String   @unique @db.VarChar(100)
+  value     Json     @db.JsonB
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by") @db.Uuid
+
+  @@map("event_config")
+}
+
+model AppConfig {
+  id          String   @id @default(uuid()) @db.Uuid
+  isSetupDone Boolean  @default(false) @map("is_setup_done")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("app_config")
+}

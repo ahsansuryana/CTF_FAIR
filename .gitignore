@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+*.log
+nginx/ssl/
+.DS_Store
+*.pem
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
+mnt/
