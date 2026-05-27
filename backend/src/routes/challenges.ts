@@ -6,6 +6,7 @@ import { requireAuth, requireParticipant, requireEventRunning } from '../middlew
 import { validate } from '../middleware/validate';
 import { AuthenticatedRequest } from '../types';
 import { createAuditLog } from '../services/audit';
+import { stopContainer } from '../docker/instanceService';
 import { z } from 'zod';
 import { io } from '../index';
 
@@ -210,6 +211,20 @@ router.post('/:id/submit', requireAuth, requireParticipant, requireEventRunning,
           pointsEarned: challenge.points,
         },
       });
+
+      // Auto-stop running Docker instance if any
+      const runningInstance = await prisma.dockerInstance.findFirst({
+        where: { userId, challengeId, status: 'RUNNING' },
+      });
+      if (runningInstance) {
+        if (runningInstance.containerId && !runningInstance.containerId.startsWith('placeholder-')) {
+          await stopContainer(runningInstance.containerId);
+        }
+        await prisma.dockerInstance.update({
+          where: { id: runningInstance.id },
+          data: { status: 'STOPPED' },
+        });
+      }
 
       // Emit scoreboard update via Socket.io
       const scoreboard = await getScoreboard();
