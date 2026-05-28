@@ -1,22 +1,24 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from './hooks/useAuth';
 import { useAuthStore } from './store/authStore';
 import { useReducedMotion } from './hooks/useReducedMotion';
-import { LoginPage } from './pages/LoginPage';
-import { NotFoundPage } from './pages/NotFoundPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { SetupWizardPage } from './pages/SetupWizardPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { ChallengeDetailPage } from './pages/ChallengeDetailPage';
-import { ScoreboardPage } from './pages/ScoreboardPage';
-import { AdminLayout } from './pages/admin/AdminLayout';
-import { AdminDashboard } from './pages/admin/AdminDashboard';
-import { AdminChallenges } from './pages/admin/AdminChallenges';
-import { AdminParticipants } from './pages/admin/AdminParticipants';
-import { AdminSubmissions } from './pages/admin/AdminSubmissions';
-import { AdminAuditLogs } from './pages/admin/AdminAuditLogs';
-import { AdminSettings } from './pages/admin/AdminSettings';
+
+const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
+const SetupWizardPage = lazy(() => import('./pages/SetupWizardPage').then(m => ({ default: m.SetupWizardPage })));
+const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
+const ChallengeDetailPage = lazy(() => import('./pages/ChallengeDetailPage').then(m => ({ default: m.ChallengeDetailPage })));
+const ScoreboardPage = lazy(() => import('./pages/ScoreboardPage').then(m => ({ default: m.ScoreboardPage })));
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const AdminChallenges = lazy(() => import('./pages/admin/AdminChallenges').then(m => ({ default: m.AdminChallenges })));
+const AdminParticipants = lazy(() => import('./pages/admin/AdminParticipants').then(m => ({ default: m.AdminParticipants })));
+const AdminSubmissions = lazy(() => import('./pages/admin/AdminSubmissions').then(m => ({ default: m.AdminSubmissions })));
+const AdminAuditLogs = lazy(() => import('./pages/admin/AdminAuditLogs').then(m => ({ default: m.AdminAuditLogs })));
+const AdminSettings = lazy(() => import('./pages/admin/AdminSettings').then(m => ({ default: m.AdminSettings })));
 
 function LoadingSpinner() {
   return (
@@ -70,6 +72,7 @@ function App() {
 
   return (
     <AnimatePresence mode="wait">
+      <Suspense fallback={<LoadingSpinner />}>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<HomeRedirect />} />
         <Route path="/login" element={<LoginRedirect />} />
@@ -94,6 +97,7 @@ function App() {
 
         <Route path="*" element={<AnimatedPage><NotFoundPage /></AnimatedPage>} />
       </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 }
