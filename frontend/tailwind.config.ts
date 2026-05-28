@@ -14,7 +14,7 @@ export default {
         'border-strong': '#52526a',
         'text-primary': '#f0f0f5',
         'text-secondary': '#a0a0b8',
-        'text-muted': '#606078',
+        'text-muted': '#787898',
         'text-disabled': '#3a3a50',
         accent: '#d4820a',
         'accent-hover': '#e8950f',

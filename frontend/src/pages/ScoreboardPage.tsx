@@ -51,14 +51,14 @@ export function ScoreboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-bg-base">
+      <main className="flex items-center justify-center min-h-screen bg-bg-base">
         <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spinner" />
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-bg-base">
+    <main className="min-h-screen bg-bg-base">
       <div className="max-w-content mx-auto px-4 py-8">
         <h1 className="font-display text-3xl font-semibold text-text-primary mb-2">{eventName}</h1>
         <p className="text-text-muted text-sm mb-8">Scoreboard</p>
@@ -119,6 +119,6 @@ export function ScoreboardPage() {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

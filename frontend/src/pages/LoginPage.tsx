@@ -39,7 +39,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-bg-base p-4">
+    <main className="flex items-center justify-center min-h-screen bg-bg-base p-4">
       <motion.div
         initial={prefersReduced ? { opacity: 1 } : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -106,6 +106,6 @@ export function LoginPage() {
           <p className="text-center text-text-muted text-xs mt-6">Powered by CTF FAIR</p>
         </div>
       </motion.div>
-    </div>
+    </main>
   );
 }

@@ -136,15 +136,15 @@ export function ChallengeDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-bg-base">
+      <main className="flex items-center justify-center min-h-screen bg-bg-base">
         <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spinner" />
-      </div>
+      </main>
     );
   }
 
   if (eventEnded) {
     return (
-      <div className="min-h-screen bg-bg-base flex items-center justify-center">
+      <main className="min-h-screen bg-bg-base flex items-center justify-center">
         <div className="text-center max-w-md px-8">
           <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-warning/20 flex items-center justify-center">
             <svg className="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,23 +157,23 @@ export function ChallengeDetailPage() {
             Back to Dashboard
           </Link>
         </div>
-      </div>
+      </main>
     );
   }
 
   if (!challenge) {
     return (
-      <div className="min-h-screen bg-bg-base flex items-center justify-center">
+      <main className="min-h-screen bg-bg-base flex items-center justify-center">
         <p className="text-text-muted">Challenge not found.</p>
-      </div>
+      </main>
     );
   }
 
   if (!challenge) {
     return (
-      <div className="min-h-screen bg-bg-base flex items-center justify-center">
+      <main className="min-h-screen bg-bg-base flex items-center justify-center">
         <p className="text-text-muted">Challenge not found</p>
-      </div>
+      </main>
     );
   }
 
@@ -186,7 +186,7 @@ export function ChallengeDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg-base">
+    <main className="min-h-screen bg-bg-base">
       <div className="max-w-content mx-auto px-4 py-8">
         <Link to="/dashboard" className="text-text-muted hover:text-text-primary text-sm transition-duration-micro mb-6 inline-block">
           ← Back to Challenges
@@ -356,6 +356,6 @@ export function ChallengeDetailPage() {
           )}
         </motion.div>
       </div>
-    </div>
+    </main>
   );
 }

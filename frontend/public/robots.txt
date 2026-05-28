@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ctf.nuxantara.site/sitemap.xml
