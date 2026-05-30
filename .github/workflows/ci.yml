@@ -99,5 +99,9 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Trigger Dokploy deploy
-        if: secrets.DOKPLOY_WEBHOOK_URL != ''
-        run: curl -X POST "${{ secrets.DOKPLOY_WEBHOOK_URL }}"
+        env:
+          WEBHOOK_URL: ${{ secrets.DOKPLOY_WEBHOOK_URL }}
+        run: |
+          if [ -n "$WEBHOOK_URL" ]; then
+            curl -X POST "$WEBHOOK_URL"
+          fi
