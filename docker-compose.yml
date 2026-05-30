@@ -23,6 +23,7 @@ services:
           memory: 128M
 
   backend:
+    image: ghcr.io/ahsansuryana/ctf-fair-backend:latest
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -66,6 +67,7 @@ services:
           memory: 256M
 
   frontend:
+    image: ghcr.io/ahsansuryana/ctf-fair-frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile
