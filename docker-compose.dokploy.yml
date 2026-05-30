@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ctffair}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-ctffair}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - ctf-app-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ctffair}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: ghcr.io/ahsansuryana/ctf-fair-backend:latest
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3001
+      DATABASE_URL: postgresql://${POSTGRES_USER:-ctffair}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-ctffair}
+      JWT_SECRET: ${JWT_SECRET:-change-this-to-a-random-256-bit-secret}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-change-this-to-another-random-256-bit-secret}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      PRISMA_ENGINE_PROTOCOL: ${PRISMA_ENGINE_PROTOCOL:-json}
+      DOMAIN: ${DOMAIN:-localhost}
+      UPLOAD_DIR: /app/uploads
+      DOCKER_NETWORK: ${DOCKER_NETWORK:-ctf_fair_ctf-challenges-net}
+      DOCKER_INSTANCE_DEFAULT_TTL: ${DOCKER_INSTANCE_DEFAULT_TTL:-3600}
+      DOCKER_INSTANCE_PORT_RANGE_START: ${DOCKER_INSTANCE_PORT_RANGE_START:-10000}
+      DOCKER_INSTANCE_PORT_RANGE_END: ${DOCKER_INSTANCE_PORT_RANGE_END:-20000}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - challenge-files:/app/uploads
+    networks:
+      - ctf-app-net
+      - ctf-challenges-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/ahsansuryana/ctf-fair-frontend:latest
+    expose:
+      - 80
+    networks:
+      - ctf-app-net
+    restart: unless-stopped
+
+networks:
+  ctf-app-net:
+    driver: bridge
+  ctf-challenges-net:
+    driver: bridge
+    internal: false
+
+volumes:
+  postgres-data:
+  challenge-files:
