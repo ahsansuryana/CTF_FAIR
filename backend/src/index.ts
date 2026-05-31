@@ -69,7 +69,7 @@ app.get('/api/health', async (_req, res) => {
 
 // Setup check middleware - block non-setup routes if setup not done
 app.use('/api', async (req, res, next) => {
-  if (req.path.startsWith('/setup') || req.path === '/health') {
+  if (req.path.startsWith('/setup') || req.originalUrl.startsWith('/api/setup') || req.originalUrl === '/api/health' || req.path === '/health') {
     next();
     return;
   }
