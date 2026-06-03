@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-31T03:00:00Z",
+  "title": "Design System: CTF FAIR",
+  "extensions": {
+    "colorMeta": {
+      "midnight": { "role": "neutral", "displayName": "Midnight", "canonical": "oklch(9% 0.008 270)", "tonalRamp": ["oklch(5% 0.004 270)", "oklch(9% 0.008 270)", "oklch(15% 0.01 270)", "oklch(22% 0.015 270)", "oklch(30% 0.02 270)", "oklch(40% 0.025 270)", "oklch(55% 0.03 270)", "oklch(70% 0.02 270)"] },
+      "surface": { "role": "neutral", "displayName": "Surface", "canonical": "oklch(14% 0.01 270)", "tonalRamp": ["oklch(10% 0.008 270)", "oklch(14% 0.01 270)", "oklch(18% 0.012 270)", "oklch(22% 0.015 270)", "oklch(28% 0.018 270)", "oklch(35% 0.02 270)", "oklch(45% 0.025 270)", "oklch(60% 0.02 270)"] },
+      "elevated": { "role": "neutral", "displayName": "Elevated", "canonical": "oklch(17% 0.012 270)", "tonalRamp": ["oklch(13% 0.01 270)", "oklch(17% 0.012 270)", "oklch(21% 0.015 270)", "oklch(26% 0.018 270)", "oklch(32% 0.02 270)", "oklch(40% 0.022 270)", "oklch(50% 0.025 270)", "oklch(65% 0.02 270)"] },
+      "ember-shadow": { "role": "primary", "displayName": "Ember Shadow", "canonical": "oklch(57% 0.15 65)", "tonalRamp": ["oklch(20% 0.08 65)", "oklch(30% 0.1 65)", "oklch(40% 0.12 65)", "oklch(50% 0.14 65)", "oklch(57% 0.15 65)", "oklch(65% 0.16 65)", "oklch(73% 0.14 65)", "oklch(82% 0.1 65)"] },
+      "ember-hover": { "role": "primary", "displayName": "Ember Hover", "canonical": "oklch(63% 0.16 65)" },
+      "success": { "role": "primary", "displayName": "Success", "canonical": "oklch(62% 0.2 145)", "tonalRamp": ["oklch(20% 0.08 145)", "oklch(33% 0.12 145)", "oklch(45% 0.16 145)", "oklch(55% 0.19 145)", "oklch(62% 0.2 145)", "oklch(70% 0.18 145)", "oklch(78% 0.14 145)", "oklch(88% 0.08 145)"] },
+      "danger": { "role": "primary", "displayName": "Danger", "canonical": "oklch(58% 0.22 25)", "tonalRamp": ["oklch(20% 0.1 25)", "oklch(32% 0.14 25)", "oklch(43% 0.18 25)", "oklch(52% 0.2 25)", "oklch(58% 0.22 25)", "oklch(65% 0.2 25)", "oklch(75% 0.16 25)", "oklch(85% 0.1 25)"] },
+      "warning": { "role": "primary", "displayName": "Warning", "canonical": "oklch(70% 0.18 80)", "tonalRamp": ["oklch(25% 0.08 80)", "oklch(38% 0.12 80)", "oklch(50% 0.14 80)", "oklch(60% 0.16 80)", "oklch(70% 0.18 80)", "oklch(78% 0.16 80)", "oklch(85% 0.12 80)", "oklch(92% 0.06 80)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page titles and event name. Appears on scoreboard, admin dashboard." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings, challenge titles on detail page." },
+      "title": { "displayName": "Title", "purpose": "Card titles, admin section headers." },
+      "body": { "displayName": "Body", "purpose": "Default reading size. Challenge descriptions, table content, forms." },
+      "label": { "displayName": "Label", "purpose": "Table headers, category badges, short labels only. Not above every section." },
+      "mono": { "displayName": "Mono", "purpose": "Data values only: scores, ranks, ports, timestamps, flags." }
+    },
+    "motion": [
+      { "name": "micro", "value": "150ms", "purpose": "Hover, focus, button press, border transitions." },
+      { "name": "transition", "value": "250ms", "purpose": "Sidebar collapse, panel show/hide, layout shifts." },
+      { "name": "appear", "value": "350ms", "purpose": "Page entrance animations, modal entrance, card stagger." },
+      { "name": "ease-snappy", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Default easing curve for all micro-interactions." },
+      { "name": "ease-page", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Page transition easing (same curve as micro)." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary CTA button. Used for Sign In, Start Event, Create Challenge.",
+      "html": "<button class=\"ds-btn-primary\">Sign In</button>",
+      "css": ".ds-btn-primary { background: #d4820a; color: #fff; font-family: 'Sora', sans-serif; font-size: 0.875rem; font-weight: 500; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; transition: background 150ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease; } .ds-btn-primary:hover { background: #e8950f; } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(212, 130, 10, 0.12); } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary action. Used for Logout, Cancel, Back.",
+      "html": "<button class=\"ds-btn-secondary\">Logout</button>",
+      "css": ".ds-btn-secondary { background: #252530; color: #a0a0b8; font-family: 'Sora', sans-serif; font-size: 0.875rem; font-weight: 500; padding: 6px 12px; border: 1px solid #3a3a48; border-radius: 6px; cursor: pointer; transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1), border-color 150ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-btn-secondary:hover { color: #f0f0f5; border-color: #52526a; } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(212, 130, 10, 0.12); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Standard text input for login, challenge submission, settings forms.",
+      "html": "<label style=\"display:block;margin-bottom:8px;font-family:'Sora',sans-serif;font-size:0.75rem;font-weight:500;color:#a0a0b8\">Username</label><input class=\"ds-input\" type=\"text\" placeholder=\"Enter your username\" />",
+      "css": ".ds-input { width: 100%; background: #252530; color: #f0f0f5; font-family: 'Sora', sans-serif; font-size: 0.875rem; padding: 10px 16px; border: 1px solid #3a3a48; border-radius: 6px; outline: none; transition: border-color 150ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1); box-sizing: border-box; } .ds-input::placeholder { color: #787898; } .ds-input:focus { border-color: #d4820a; box-shadow: 0 0 0 3px rgba(212, 130, 10, 0.12); }"
+    },
+    {
+      "name": "Category Badge",
+      "kind": "chip",
+      "refersTo": "badge-category",
+      "description": "Challenge category indicator. One per hue variant.",
+      "html": "<span class=\"ds-badge-category\">WEB</span>",
+      "css": ".ds-badge-category { display: inline-block; font-family: 'Sora', sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); } .ds-badge-category[data-category=\"crypto\"] { background: rgba(168, 85, 247, 0.2); color: #a855f7; border-color: rgba(168, 85, 247, 0.3); } .ds-badge-category[data-category=\"forensics\"] { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); } .ds-badge-category[data-category=\"stegano\"] { background: rgba(34, 197, 94, 0.2); color: #22c55e; border-color: rgba(34, 197, 94, 0.3); } .ds-badge-category[data-category=\"osint\"] { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }"
+    },
+    {
+      "name": "Challenge Card",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Challenge card on participant dashboard. Three states: available, solved, locked.",
+      "html": "<a class=\"ds-card-challenge\" href=\"#\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:12px\"><span class=\"ds-badge-category\">CRYPTO</span><span style=\"font-family:'IBM Plex Mono',monospace;font-size:0.875rem;color:#d4820a;font-weight:500\">100pts</span></div><h3 style=\"font-family:'Sora',sans-serif;font-size:1.125rem;font-weight:500;color:#f0f0f5;margin:0 0 8px\">Challenge Title</h3><p style=\"font-family:'Sora',sans-serif;font-size:0.875rem;color:#a0a0b8;line-height:1.6;margin:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical\">Challenge description goes here and is truncated to two lines.</p><div style=\"display:flex;align-items:center;gap:8px;margin-top:16px\"><span style=\"color:#22c55e;font-size:0.875rem;font-weight:500\">✓ Solved</span></div></a>",
+      "css": ".ds-card-challenge { display: block; background: #16161a; border: 1px solid #3a3a48; border-radius: 8px; padding: 24px; text-decoration: none; transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), border-color 150ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-card-challenge:hover { border-color: #52526a; transform: translateY(-2px); } .ds-card-challenge[data-solved=\"true\"] { border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.08); } .ds-card-challenge[data-locked=\"true\"] { opacity: 0.5; pointer-events: none; }"
+    },
+    {
+      "name": "Admin Nav Item",
+      "kind": "nav",
+      "refersTo": "nav-admin",
+      "description": "Sidebar navigation item in the admin panel.",
+      "html": "<nav style=\"width:240px;background:#16161a;border-right:1px solid #2a2a35;padding:8px;box-sizing:border-box\"><a class=\"ds-nav-item ds-nav-item-active\" href=\"#\"><svg class=\"ds-nav-icon\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z\"/></svg><span>Dashboard</span></a><a class=\"ds-nav-item\" href=\"#\"><svg class=\"ds-nav-icon\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4\"/></svg><span>Challenges</span></a><a class=\"ds-nav-item\" href=\"#\"><svg class=\"ds-nav-icon\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z\"/></svg><span>Participants</span></a></nav>",
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 6px; color: #a0a0b8; font-family: 'Sora', sans-serif; font-size: 0.875rem; text-decoration: none; transition: color 150ms cubic-bezier(0.16, 1, 0.3, 1), background 150ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-nav-item:hover { color: #f0f0f5; background: #252530; } .ds-nav-item-active { background: rgba(212, 130, 10, 0.12); color: #d4820a; } .ds-nav-icon { flex-shrink: 0; }"
+    },
+    {
+      "name": "Scoreboard Table Row",
+      "kind": "custom",
+      "refersTo": "scoreboard-row",
+      "description": "Row in the live scoreboard table with rank, username, score, and solve count.",
+      "html": "<table style=\"width:100%;border-collapse:collapse;font-family:'Sora',sans-serif;background:#16161a;border:1px solid #3a3a48;border-radius:8px\"><thead><tr style=\"border-bottom:1px solid #2a2a35\"><th style=\"text-align:left;padding:12px 16px;font-size:0.75rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;color:#787898\">Rank</th><th style=\"text-align:left;padding:12px 16px;font-size:0.75rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;color:#787898\">Username</th><th style=\"text-align:right;padding:12px 16px;font-size:0.75rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;color:#787898\">Score</th></tr></thead><tbody><tr class=\"ds-scoreboard-row\"><td class=\"ds-scoreboard-cell\"><span style=\"font-family:'IBM Plex Mono',monospace;font-size:0.875rem\">🥇</span></td><td class=\"ds-scoreboard-cell\" style=\"color:#f0f0f5;font-weight:500\">player1</td><td class=\"ds-scoreboard-cell\" style=\"text-align:right\"><span style=\"font-family:'IBM Plex Mono',monospace;font-size:0.875rem;color:#d4820a;font-weight:600\">900</span></td></tr><tr class=\"ds-scoreboard-row\"><td class=\"ds-scoreboard-cell\"><span style=\"font-family:'IBM Plex Mono',monospace;font-size:0.875rem\">🥈</span></td><td class=\"ds-scoreboard-cell\" style=\"color:#f0f0f5;font-weight:500\">player2</td><td class=\"ds-scoreboard-cell\" style=\"text-align:right\"><span style=\"font-family:'IBM Plex Mono',monospace;font-size:0.875rem;color:#d4820a;font-weight:600\">600</span></td></tr><tr class=\"ds-scoreboard-row\"><td class=\"ds-scoreboard-cell\"><span style=\"font-family:'IBM Plex Mono',monospace;font-size:0.875rem\">#3</span></td><td class=\"ds-scoreboard-cell\" style=\"color:#f0f0f5;font-weight:500\">player3</td><td class=\"ds-scoreboard-cell\" style=\"text-align:right\"><span style=\"font-family:'IBM Plex Mono',monospace;font-size:0.875rem;color:#d4820a;font-weight:600\">300</span></td></tr></tbody></table>",
+      "css": ".ds-scoreboard-row { border-bottom: 1px solid #2a2a35; transition: background 150ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-scoreboard-row:last-child { border-bottom: none; } .ds-scoreboard-row:hover { background: rgba(37, 37, 48, 0.5); } .ds-scoreboard-cell { padding: 12px 16px; font-family: 'Sora', sans-serif; font-size: 0.875rem; color: #a0a0b8; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Briefing Room",
+    "overview": "This is a space designed for focus, not spectacle. Like a military briefing room before an operation \u2014 the walls are dark, the light is directed at the mission, and every element on the board earns its place. Nothing decorative, nothing playful, nothing that distracts from the task. The interface is an instrument of the competition, not a game itself. Participants scan challenge cards, submit flags, and track standings. Administrators manage the event from a control panel that prioritizes information density over onboarding delight. Both surfaces share the same visual vocabulary: layered dark tones, amber signals, monospaced data, and a deliberate absence of shadow.",
+    "keyCharacteristics": [
+      "Dark as native environment, not as a feature",
+      "Tonal layering replaces shadow \u2014 depth through lightness, not blur",
+      "Amber as signal (urgency, attention, the active state)",
+      "Information over ornament on every surface",
+      "State is communicated through icon + text + color, never color alone",
+      "Reduced motion is the baseline; animation enhances, never gates"
+    ],
+    "rules": [
+      { "name": "The Ember Rarity Rule", "body": "The amber accent occupies \u22645% of any given screen. Its scarcity is its power.", "section": "colors" },
+      { "name": "The Chroma-Only-When-Meaningful Rule", "body": "Chroma is reserved for semantics: solved (green), locked (muted), error (red), category (hue-coded). Gray backgrounds stay gray.", "section": "colors" },
+      { "name": "The Three-Signal Rule", "body": "Every state indicator must carry three signals: an icon, a text label, and a color. Never color alone.", "section": "colors" },
+      { "name": "The Mono-Is-Data Rule", "body": "IBM Plex Mono is reserved for user-facing data values. Navigation, descriptions, and UI labels never use mono.", "section": "typography" },
+      { "name": "The No-Shadow Rule", "body": "box-shadow is prohibited for depth. The sole exception is the focus-visible ring, which is an accessibility requirement.", "section": "elevation" },
+      { "name": "The Card-Is-A-Link Rule", "body": "Challenge cards on the participant dashboard are entire clickable surfaces. Never a nested button.", "section": "components" }
+    ],
+    "dos": [
+      "Use the tonal ramp (Midnight / Surface / Elevated / Muted BG) to create depth. No shadows.",
+      "Restrict amber accent to \u22645% of any screen. Its rarity is its authority.",
+      "Pair every state indicator with an icon, a text label, and a color \u2014 never alone.",
+      "Use monospaced type for data values only. All UI labels stay in Sora.",
+      "Keep body line length at 65\u201375ch maximum.",
+      "Apply text-wrap: balance on h1\u2013h3 and text-wrap: pretty on prose.",
+      "Provide reduced-motion fallbacks for every animation via prefers-reduced-motion.",
+      "Use the snappy ease curve cubic-bezier(0.16, 1, 0.3, 1) for all micro-interactions."
+    ],
+    "donts": [
+      "Use box-shadow for elevation. Depth comes from tonal contrast, not shadows.",
+      "Use gradient text, glassmorphism, or noise-overlay blurs. Function over decoration.",
+      "Place a tiny uppercase tracked eyebrow above every section. Label style is for table headers and badges only.",
+      "Use side-stripe borders (border-left > 1px as a colored accent). Use full borders or background tints instead.",
+      "Use cartoon icons, gamification elements, or bright primary colors. This is a cybersecurity competition, not a mobile game.",
+      "Use all-caps body copy. Uppercase is reserved for labels (\u22644 words) and badges.",
+      "Make the design louder than the data. The challenges are the content; the interface is invisible when it works."
+    ]
+  }
+}

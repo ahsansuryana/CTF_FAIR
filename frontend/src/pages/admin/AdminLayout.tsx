@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useEventStore } from '../../store/eventStore';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 const navItems = [
   { to: '/admin', label: 'Dashboard', icon: 'M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z', end: true },
@@ -14,78 +15,134 @@ const navItems = [
 
 export function AdminLayout() {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
   const eventName = useEventStore((s) => s.eventName);
   const loadEventInfo = useEventStore((s) => s.loadEventInfo);
+  const prefersReduced = useReducedMotion();
   loadEventInfo();
+
+  useEffect(() => {
+    if (!prefersReduced) return;
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen, prefersReduced]);
 
   async function handleLogout() {
     await logout();
     navigate('/login');
   }
 
+  const sidebarContent = (
+    <>
+      <div className="p-4 border-b border-border-subtle flex items-center gap-3">
+        <div className={`font-mono text-accent font-semibold leading-tight ${collapsed ? 'text-center text-sm flex-1' : 'text-base flex-1'} truncate`}>
+          {collapsed ? (eventName || 'E').charAt(0) : eventName || 'Admin'}
+        </div>
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="hidden lg:flex items-center justify-center w-6 h-6 rounded text-text-muted hover:text-text-primary hover:bg-bg-muted transition-duration-micro flex-shrink-0"
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <svg className={`w-4 h-4 transition-transform duration-200 ${collapsed ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+      </div>
+
+      <nav className="flex-1 p-2 space-y-0.5">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.end}
+            onClick={() => setMobileOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-button text-sm transition-duration-micro ${
+                isActive
+                  ? 'bg-accent-subtle text-accent font-medium'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-bg-muted'
+              } ${collapsed ? 'justify-center' : ''}`
+            }
+          >
+            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} /></svg>
+            {!collapsed && <span>{item.label}</span>}
+          </NavLink>
+        ))}
+      </nav>
+
+      <div className="p-2 border-t border-border-subtle space-y-0.5">
+        {!collapsed && user && (
+          <div className="px-3 py-2 text-xs text-text-muted truncate flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-success" />
+            {user.username}
+          </div>
+        )}
+        <button
+          onClick={handleLogout}
+          className={`flex items-center gap-3 px-3 py-2 rounded-button text-sm transition-duration-micro text-text-muted hover:text-danger ${collapsed ? 'justify-center w-full' : 'w-full'}`}
+        >
+          <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          {!collapsed && <span>Logout</span>}
+        </button>
+        {!collapsed && (
+          <p className="px-3 py-2 text-text-muted text-[10px] border-t border-border-subtle mt-2 pt-2">Powered by CTF FAIR</p>
+        )}
+      </div>
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-bg-base flex">
-      {/* Sidebar */}
+      {/* Desktop sidebar */}
       <aside
-        className={`bg-bg-surface border-r border-border-subtle flex flex-col transition-all duration-250 ${
+        className={`hidden lg:flex flex-col bg-bg-surface border-r border-border-subtle transition-all duration-250 overflow-hidden ${
           collapsed ? 'w-sidebar-collapsed' : 'w-sidebar'
         }`}
       >
-        <div className="p-4 border-b border-border-subtle">
-          <h2 className={`font-mono text-accent font-semibold ${collapsed ? 'text-center text-sm' : 'text-base'} truncate`}>
-            {collapsed ? eventName.charAt(0) || 'E' : eventName || 'Event'}
-          </h2>
-        </div>
-
-        <nav className="flex-1 p-2 space-y-1">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-button text-sm transition-duration-micro ${
-                  isActive
-                    ? 'bg-accent-subtle text-accent'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-bg-muted'
-                } ${collapsed ? 'justify-center' : ''}`
-              }
-            >
-              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} /></svg>
-              {!collapsed && <span>{item.label}</span>}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div className="p-2 border-t border-border-subtle">
-          {!collapsed && (
-            <div className="px-3 py-2 text-xs text-text-muted truncate">{user?.username}</div>
-          )}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="w-full px-3 py-2 text-text-muted hover:text-text-primary text-sm transition-duration-micro text-left"
-          >
-            {collapsed ? '→' : 'Collapse'}
-          </button>
-          <button
-            onClick={handleLogout}
-            className="w-full px-3 py-2 text-text-muted hover:text-danger text-sm transition-duration-micro text-left"
-          >
-            {collapsed
-              ? <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-              : 'Logout'}
-          </button>
-          {!collapsed && (
-            <p className="px-3 py-2 text-text-muted text-xs border-t border-border-subtle mt-2 pt-2">Powered by CTF FAIR</p>
-          )}
-        </div>
+        {sidebarContent}
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-auto">
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Mobile drawer */}
+      <aside
+        className={`fixed top-0 left-0 z-50 h-full w-sidebar bg-bg-surface border-r border-border-subtle flex flex-col transition-transform duration-250 lg:hidden ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {sidebarContent}
+      </aside>
+
+      {/* Main content area */}
+      <main className="flex-1 overflow-auto min-h-screen">
+        <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-border-subtle bg-bg-surface sticky top-0 z-30">
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="flex items-center justify-center w-8 h-8 rounded text-text-secondary hover:text-text-primary hover:bg-bg-muted transition-duration-micro"
+            aria-label="Open menu"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <span className="font-mono text-accent font-semibold text-sm truncate max-w-[200px]">{eventName || 'Admin'}</span>
+          <div className="w-8" />
+        </div>
         <Outlet />
       </main>
     </div>
